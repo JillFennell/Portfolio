@@ -1,37 +1,73 @@
-## Welcome to GitHub Pages
+# Portfolio
+Professional Portfolio 
+### Welcome to my professional code portfolio, below are some samples of code that I have either created myself, or made a contribution.
+#### If you have any questions please contact me at [jl499774@dal.ca](mailto:jl499774@dal.ca)
 
-You can use the [editor on GitHub](https://github.com/JillFennell/Portfolio/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+## Importing Data
+#### Firstly, this is how I read in Data, where "spid" represents the beginning of the filename
+files = glob('spid*/*_data.txt')
+dataframes = [pd.read_csv(x, sep='\t') for x in files]
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Cleaning data
+##### Here is code to remove items from a data frame
+df = df[df.block != 'practice']
 
-### Markdown
+#### Here is a loop with several cleaning steps used to process imported data that I helped write in a project. 
+processed_dataframes = []
+fast_list = []
+slow_list = []
+for file in files:
+    stats_dict = {}
+    unprocessed_dataframe = pd.read_csv(file, sep='\t')
+    unprocessed_dataframe = unprocessed_dataframe.dropna()
+    unprocessed_dataframe = unprocessed_dataframe.drop_duplicates(subset=['rt'])
+    unprocessed_dataframe = unprocessed_dataframe[unprocessed_dataframe.block != 'practice']
+    std_rt = unprocessed_dataframe['rt'].std()
+    mean_rt = unprocessed_dataframe['rt'].mean()
+    upperoutlier = mean_rt + std_rt*2
+    loweroutlier = mean_rt - std_rt*2
+    slow = unprocessed_dataframe.loc[unprocessed_dataframe['rt'] > upperoutlier]
+    unprocessed_dataframe.loc[slow.index, 'rt'] = mean_rt
+    fast = unprocessed_dataframe.loc[unprocessed_dataframe['rt'] < loweroutlier]
+    unprocessed_dataframe.loc[fast.index, 'rt'] = mean_rt
+    processed_dataframes.append(unprocessed_dataframe)
+    fast_list.append(fast)
+    slow_list.append(slow)
+    
+#### To further organize data, I am able to combine data into 2D NumPY arrays
+np_err = np.array(err)
+dat = np.array((np_rt_ms, np_err))
+print(dat)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Manipulating Data
 
-```markdown
-Syntax highlighted code block
+#### I am able to use functions and methods to describe data
+ean_rt= np.mean(rt_conversion).round(1)
+print("Mean RT = " + str(mean_rt) + " ms")
 
-# Header 1
-## Header 2
-### Header 3
+std_rt = np.std(rt_conversion).round(2) 
+print("Standard deviation = " + str(std_rt) + " ms")
 
-- Bulleted
-- List
 
-1. Numbered
-2. List
+#### I am also capable of writing and using loops
+for index in more_rt:
+    rt.append(index)
+for index in more_err: 
+    err.append(index)
 
-**Bold** and _Italic_ and `Code` text
+## Data visualization 
 
-[Link](url) and ![Image](src)
-```
+#### Here's an example of code used to visualize data 
+log_incon = df.loc[df['flankers'] == 'incongruent']
+log_rt_incon = np.log(log_incon['rt'])
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+log_con = df.loc[df['flankers'] == 'congruent']
+log_rt_con = np.log(log_con['rt'])
 
-### Jekyll Themes
+datas = {'congruent' : log_rt_con, 'incongruent' : log_rt_incon}
+logcond = pd.DataFrame(data=datas)
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/JillFennell/Portfolio/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+logcond.plot(kind='box')
+plt.show()
 
-### Support or Contact
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
