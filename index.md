@@ -1,6 +1,6 @@
 # Portfolio
 Professional Portfolio 
-### Welcome to my professional code portfolio, below are some samples of code that I have either created myself, or made a contribution.
+#### Welcome to my professional code portfolio, below are some samples of code that I have either created myself, or made a contribution.
 #### If you have any questions please contact me at [jl499774@dal.ca](mailto:jl499774@dal.ca)
 
 ## Importing Data
@@ -12,7 +12,7 @@ dataframes = [pd.read_csv(x, sep='\t') for x in files]
 ##### Here is code to remove items from a data frame
 df = df[df.block != 'practice']
 
-#### Here is a loop with several cleaning steps used to process imported data that I helped write in a project. 
+##### Here is a loop with several cleaning steps used to process imported data that I helped write in a project. 
 processed_dataframes = []
 fast_list = []
 slow_list = []
